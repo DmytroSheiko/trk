@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    env_file: '${ENV_FILE}'
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nest_network
+
+  nestjs:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run start:dev"
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    networks:
+      - nest_network
+
+networks:
+  nest_network:
+
+volumes:
+  postgres_data:
+
